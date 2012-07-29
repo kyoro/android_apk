@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "android_apk"
   gem.homepage = "http://github.com/kyoro/android_apk"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = "Android APK file analyzer"
+  gem.description = "This library can analyze Android APK application package. You can get any information of android apk file."
   gem.email = "kyoro@hakamastyle.net"
   gem.authors = ["Kyosuke INOUE"]
   # dependencies defined in Gemfile
