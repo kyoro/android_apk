@@ -1,4 +1,4 @@
-ndroid APK
+#Android APK
 This gem library is Android application package file (.apk) analyzer.
 you can read any information of android apk files.
 
