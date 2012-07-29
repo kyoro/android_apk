@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "android_apk"
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kyosuke INOUE"]
@@ -25,8 +25,11 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "android_apk.gemspec",
     "lib/android_apk.rb",
     "spec/android_apk_spec.rb",
+    "spec/mock/dummy.apk",
+    "spec/mock/vibee.apk",
     "spec/spec_helper.rb"
   ]
   s.homepage = "http://github.com/kyoro/android_apk"
