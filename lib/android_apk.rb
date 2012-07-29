@@ -26,9 +26,4 @@ class AndroidApk
     return apk
   end
 
-
-  def self.hoge
-    return true
-  end
-
 end

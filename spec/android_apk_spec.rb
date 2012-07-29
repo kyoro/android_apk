@@ -2,9 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 require "pp"
 
 describe "AndroidApk" do
-  it "Checks that a yen is displayed" do
-    AndroidApk.hoge.should == true
-  end
   apk = nil  
   sample_file_path = File.dirname(__FILE__) + "/mock/vibee.apk"
   dummy_file_path = File.dirname(__FILE__) + "/mock/dummy.apk"
