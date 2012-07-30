@@ -5,16 +5,16 @@
 
 Gem::Specification.new do |s|
   s.name = "android_apk"
-  s.version = "0.2.0"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kyosuke INOUE"]
-  s.date = "2012-07-29"
+  s.date = "2012-07-30"
   s.description = "This library can analyze Android APK application package. You can get any information of android apk file."
   s.email = "kyoro@hakamastyle.net"
   s.extra_rdoc_files = [
     "LICENSE.txt",
-    "README.rdoc"
+    "README.md"
   ]
   s.files = [
     ".document",
@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
     "Gemfile",
     "Gemfile.lock",
     "LICENSE.txt",
-    "README.rdoc",
+    "README.md",
     "Rakefile",
     "VERSION",
     "android_apk.gemspec",
