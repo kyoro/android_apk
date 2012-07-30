@@ -32,4 +32,8 @@ describe "AndroidApk" do
     apk.version_name.should == "1"
   end
 
+  it "Icon file unzip" do
+    apk.icon_file.should_not == nil
+  end
+
 end

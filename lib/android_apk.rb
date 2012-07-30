@@ -1,5 +1,7 @@
+require "tmpdir"
+require "pp"
 class AndroidApk
-  attr_accessor :results,:label,:icon,:package_name,:version_code, :version_name
+  attr_accessor :results,:label,:icon,:package_name,:version_code, :version_name, :filepath
   def self.analyze(filepath)
     return nil unless File.exist?(filepath)
     apk = AndroidApk.new
@@ -8,6 +10,7 @@ class AndroidApk
     if results.index("ERROR: dump failed")
       return nil
     end
+    apk.filepath = filepath
     apk.results = results
     results.split("\n").each do |line|
       info = line.split("\s")
@@ -24,6 +27,16 @@ class AndroidApk
       end
     end
     return apk
+  end
+
+  def icon_file
+    Dir.mktmpdir do |dir|
+      command = sprintf("unzip %s -d %s 2>&1",self.filepath,dir)
+      results = `#{command}`
+      path =  dir + "/" + self.icon 
+      return nil unless  File.exist?(path)
+      return path
+    end
   end
 
 end
