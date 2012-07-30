@@ -35,7 +35,7 @@ class AndroidApk
       results = `#{command}`
       path =  dir + "/" + self.icon 
       return nil unless  File.exist?(path)
-      return path
+      return File.new(path,'r')
     end
   end
 
