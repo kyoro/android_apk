@@ -31,7 +31,7 @@ class AndroidApk
 
   def icon_file
     Dir.mktmpdir do |dir|
-      command = sprintf("unzip %s -d %s 2>&1",self.filepath,dir)
+      command = sprintf("unzip %s %s -d %s 2>&1",self.filepath,self.icon,dir)
       results = `#{command}`
       path =  dir + "/" + self.icon 
       return nil unless  File.exist?(path)
