@@ -7,7 +7,7 @@ class AndroidApk
     apk = AndroidApk.new
     command = "aapt dump badging '" + filepath + "' 2>&1"
     results = `#{command}`
-    if results.index("ERROR: dump failed")
+    if $?.exitstatus != 0 or results.index("ERROR: dump failed")
       return nil
     end
     apk.filepath = filepath
@@ -52,7 +52,7 @@ class AndroidApk
   def signature
     command = sprintf("unzip -p '%s' META-INF/*.RSA | keytool -printcert | grep SHA1: 2>&1", self.filepath)
     results = `#{command}`
-    return nil if results.nil? || !results.index('SHA1:')
+    return nil if $?.exitstatus != 0 || results.nil? || !results.index('SHA1:')
     val = results.scan(/(?:[0-9A-Z]{2}:?){20}/)
     return nil if val.nil? || val.length != 1
     return val[0].gsub(/:/, "").downcase
@@ -83,13 +83,16 @@ class AndroidApk
       key, value = _parse_line(line)
       next if key.nil?
       if vars.key?(key)
-         if (vars[key].is_a?(Hash))
-           vars[key].merge(value)
-           next
-         else
-           vars[key] = [vars[key]] unless (vars[key].is_a?(Array))
-           vars[key].concat(value)
-         end
+        if (vars[key].is_a?(Hash) and value.is_a?(Hash))
+          vars[key].merge(value)
+        else
+          vars[key] = [vars[key]] unless (vars[key].is_a?(Array))
+          if (value.is_a?(Array))
+            vars[key].concat(value)
+          else
+            vars[key].push(value)
+          end
+        end
       else
          vars[key] = value.nil? ? nil :
            (value.is_a?(Hash) ? value :
