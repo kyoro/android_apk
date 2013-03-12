@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "android_apk"
-  s.version = "0.6.0"
+  s.version = "0.7.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kyosuke INOUE"]
-  s.date = "2012-08-14"
+  s.date = "2013-03-12"
   s.description = "This library can analyze Android APK application package. You can get any information of android apk file."
   s.email = "kyoro@hakamastyle.net"
   s.extra_rdoc_files = [
@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
     "lib/android_apk.rb",
     "spec/android_apk_spec.rb",
     "spec/mock/BarcodeScanner4.2.apk",
+    "spec/mock/UECExpress.apk",
     "spec/mock/dummy.apk",
     "spec/mock/sample.apk",
     "spec/spec_helper.rb"
@@ -36,7 +37,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/kyoro/android_apk"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.15"
+  s.rubygems_version = "1.8.24"
   s.summary = "Android APK file analyzer"
 
   if s.respond_to? :specification_version then
