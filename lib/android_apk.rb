@@ -39,7 +39,7 @@ class AndroidApk
 
   def icon_file(dpi = nil)
     icon = dpi ? self.icons[dpi.to_i] : self.icon
-    return nil unless icon
+    return nil if icon.empty?
     Dir.mktmpdir do |dir|
       command = sprintf("unzip '%s' '%s' -d '%s' 2>&1",self.filepath,icon,dir)
       results = `#{command}`
