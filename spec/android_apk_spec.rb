@@ -5,8 +5,10 @@ require "pp"
 describe "AndroidApk" do
   apk = nil  
   apk2 = nil
+  icon_not_set_apk = nil
   sample_file_path = File.dirname(__FILE__) + "/mock/sample.apk"
   sample2_file_path = File.dirname(__FILE__) + "/mock/BarcodeScanner4.2.apk"
+  icon_not_set_file_path = File.dirname(__FILE__) + "/mock/UECExpress.apk"
   dummy_file_path = File.dirname(__FILE__) + "/mock/dummy.apk"
 
   it "Sample apk file exist" do
@@ -76,6 +78,12 @@ describe "AndroidApk" do
 
   it "Can read signature 2" do
     apk2.signature.should == "e460df681d330f93f92e712cd79985d99379f5e0"
+  end
+
+  it "If icon has not set returns nil" do
+    icon_not_set_apk = AndroidApk.analyze(icon_not_set_file_path)
+    icon_not_set_apk.should_not == nil
+    icon_not_set_apk.icon_file.should == nil
   end
 
 end
