@@ -15,8 +15,8 @@ class AndroidApk
     vars = _parse_aapt(results)
 
     # application info
-    apk.label, apk.icon =
-      vars['application'].values_at('label', 'icon')
+    apk.label = vars['application-label']
+    apk.icon = vars['application']['icon']
 
     # package 
     apk.package_name, apk.version_code, apk.version_name =
@@ -58,6 +58,12 @@ class AndroidApk
     return val[0].gsub(/:/, "").downcase
   end
 
+  # workaround for https://code.google.com/p/android/issues/detail?id=160847
+  def self._parse_values_workaround(str)
+    return nil if str.nil?
+    str.scan(/^'(.+)'$/).map{|v| v[0].gsub(/\\'/, "'")}
+  end
+
   def self._parse_values(str)
     return nil if str.nil?
     if str.index("='")
@@ -74,7 +80,13 @@ class AndroidApk
   def self._parse_line(line)
     return nil if line.nil?
     info = line.split(":", 2)
-    return info[0], _parse_values( info[1] )
+    values =
+        if info[0].start_with?('application-label')
+          _parse_values_workaround info[1]
+        else
+          _parse_values info[1]
+        end
+    return info[0], values
   end
 
   def self._parse_aapt(results)
