@@ -1,11 +1,13 @@
-require "tmpdir"
-require "pp"
+require 'tmpdir'
+require 'shellwords'
+require 'open3'
+
 class AndroidApk
   attr_accessor :results,:label,:labels,:icon,:icons,:package_name,:version_code,:version_name,:sdk_version,:target_sdk_version,:filepath
   def self.analyze(filepath)
     return nil unless File.exist?(filepath)
     apk = AndroidApk.new
-    command = "aapt dump badging " + filepath + " 2>&1"
+    command = "aapt dump badging #{filepath.shellescape} 2>&1"
     results = `#{command}`
     if $?.exitstatus != 0 or results.index("ERROR: dump failed")
       return nil
@@ -41,7 +43,7 @@ class AndroidApk
     icon = dpi ? self.icons[dpi.to_i] : self.icon
     return nil if icon.empty?
     Dir.mktmpdir do |dir|
-      command = sprintf("unzip '%s' '%s' -d '%s' 2>&1",self.filepath,icon,dir)
+      command = "unzip #{self.filepath.shellescape} #{icon.shellescape} -d #{dir.shellescape} 2>&1"
       results = `#{command}`
       path =  dir + "/" + icon 
       return nil unless File.exist?(path)
@@ -50,10 +52,10 @@ class AndroidApk
   end
 
   def signature
-    command = sprintf("unzip -p '%s' META-INF/*.RSA | keytool -printcert | grep SHA1: 2>&1", self.filepath)
-    results = `#{command}`
-    return nil if $?.exitstatus != 0 || results.nil? || !results.index('SHA1:')
-    val = results.scan(/(?:[0-9A-Z]{2}:?){20}/)
+    command = "unzip -p #{self.filepath.shellescape} META-INF/*.RSA META-INF/*.DSA | keytool -printcert | grep SHA1:"
+    output, _, status = Open3.capture3(command)
+    return if status != 0 || output.nil? || !output.index('SHA1:')
+    val = output.scan(/(?:[0-9A-Z]{2}:?){20}/)
     return nil if val.nil? || val.length != 1
     return val[0].gsub(/:/, "").downcase
   end

@@ -1,8 +1,12 @@
 #Android APK
+
+[![Circle CI](https://circleci.com/gh/kyoro/android_apk.svg?style=svg)](https://circleci.com/gh/kyoro/android_apk)
+
 This gem library is Android application package file (.apk) analyzer.
 you can read any information of android apk files.
 
 ## Attention
+
 You must set path to 'AndroidSDK/platform-tools'.
 And you must can execute 'aapt' command.
 
