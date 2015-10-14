@@ -5,7 +5,7 @@ class AndroidApk
   def self.analyze(filepath)
     return nil unless File.exist?(filepath)
     apk = AndroidApk.new
-    command = "aapt dump badging '" + filepath + "' 2>&1"
+    command = "aapt dump badging " + filepath + " 2>&1"
     results = `#{command}`
     if $?.exitstatus != 0 or results.index("ERROR: dump failed")
       return nil
