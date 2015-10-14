@@ -19,7 +19,7 @@ apk.label #Application Name
 apk.package_name #Package Name
 apk.icon #Included Icon file in apk file
 apk.version_code #Version Code
-apk.version_name "Version Name
+apk.version_name #Version Name
 ```
 
 ## License
