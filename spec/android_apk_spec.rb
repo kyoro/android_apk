@@ -8,12 +8,15 @@ describe "AndroidApk" do
   icon_not_set_apk = nil
   sample_file_path = File.dirname(__FILE__) + "/mock/sample.apk"
   sample2_file_path = File.dirname(__FILE__) + "/mock/BarcodeScanner4.2.apk"
+  sample_space_file_path = File.dirname(__FILE__) + "/mock/sample with space.apk"
   icon_not_set_file_path = File.dirname(__FILE__) + "/mock/UECExpress.apk"
   dummy_file_path = File.dirname(__FILE__) + "/mock/dummy.apk"
+  dsa_file_path = File.dirname(__FILE__) + "/mock/dsa.apk"
 
   it "Sample apk file exist" do
     File.exist?(sample_file_path).should == true
     File.exist?(sample2_file_path).should == true
+    File.exist?(sample_space_file_path).should == true
   end
 
   it "Library can not read apk file" do
@@ -86,4 +89,20 @@ describe "AndroidApk" do
     icon_not_set_apk.icon_file.should == nil
   end
 
+  context "with space character filename" do
+    subject { AndroidApk.analyze(sample_space_file_path) }
+    it 'returns analyzed data' do
+      is_expected.not_to be_nil
+    end
+  end
+
+  context "with DSA signing" do
+    subject { AndroidApk.analyze(dsa_file_path) }
+    it 'returns analyzed data' do
+      is_expected.not_to be_nil
+    end
+    it 'can extract signature' do
+      expect(subject.signature).to eq('2d8068f79a5840cbce499b51821aaa6c775ff3ff')
+    end 
+  end
 end
