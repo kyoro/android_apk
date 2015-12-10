@@ -43,8 +43,9 @@ class AndroidApk
     icon = dpi ? self.icons[dpi.to_i] : self.icon
     return nil if icon.empty?
 
-    if icon.ends_with?('.xml') && want_png
-      icon.gsub! %r{res/drawable-([^-]+)-v21/([^/]+)\.xml}, 'res/drawable-\1-v4/\2.png'
+    if want_png && icon.end_with?('.xml')
+      dpis = dpi_str(dpi)
+      icon.gsub! %r{res/drawable-anydpi-v21/([^/]+)\.xml}, "res/drawable-#{dpis}-v4/\\1.png"
     end
 
     Dir.mktmpdir do |dir|
@@ -53,6 +54,25 @@ class AndroidApk
       path =  dir + "/" + icon 
       return nil unless File.exist?(path)
       return File.new(path,'r')
+    end
+  end
+
+  def dpi_str(dpi)
+    case dpi.to_i
+      when 120
+        'ldpi'
+      when 160
+        'mdpi'
+      when 240
+        'hdpi'
+      when 320
+        'xhdpi'
+      when 480
+        'xxhdpi'
+      when 640
+        'xxxhdpi'
+      else
+        'xxxhdpi'
     end
   end
 

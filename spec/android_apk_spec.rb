@@ -6,12 +6,15 @@ describe "AndroidApk" do
   apk = nil  
   apk2 = nil
   icon_not_set_apk = nil
-  sample_file_path = File.dirname(__FILE__) + "/mock/sample.apk"
-  sample2_file_path = File.dirname(__FILE__) + "/mock/BarcodeScanner4.2.apk"
-  sample_space_file_path = File.dirname(__FILE__) + "/mock/sample with space.apk"
-  icon_not_set_file_path = File.dirname(__FILE__) + "/mock/UECExpress.apk"
-  dummy_file_path = File.dirname(__FILE__) + "/mock/dummy.apk"
-  dsa_file_path = File.dirname(__FILE__) + "/mock/dsa.apk"
+
+  mockdir                = File.join(File.dirname(__FILE__), 'mock')
+  sample_file_path       = File.join(mockdir, 'sample.apk')
+  sample2_file_path      = File.join(mockdir, 'BarcodeScanner4.2.apk')
+  sample_space_file_path = File.join(mockdir, 'sample with space.apk')
+  icon_not_set_file_path = File.join(mockdir, 'UECExpress.apk')
+  dummy_file_path        = File.join(mockdir, 'dummy.apk')
+  dsa_file_path          = File.join(mockdir, 'dsa.apk')
+  vector_file_path       = File.join(mockdir, 'vector-icon.apk')
 
   it "Sample apk file exist" do
     File.exist?(sample_file_path).should == true
@@ -104,5 +107,21 @@ describe "AndroidApk" do
     it 'can extract signature' do
       expect(subject.signature).to eq('2d8068f79a5840cbce499b51821aaa6c775ff3ff')
     end 
+  end
+
+  context "with vector icon" do
+    subject { AndroidApk.analyze(vector_file_path) }
+    it 'can be analyzed' do
+      is_expected.not_to be_nil
+    end
+    it 'has xml icon' do
+      expect(subject.icon_file).not_to be_nil
+    end
+    it 'can return png icon' do
+      expect(subject.icon_file(nil, true)).not_to be_nil
+    end
+    it 'can return png icon by specific dpi' do
+      expect(subject.icon_file(240, true)).not_to be_nil
+    end
   end
 end
