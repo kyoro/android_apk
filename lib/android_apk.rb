@@ -39,9 +39,14 @@ class AndroidApk
     return apk
   end
 
-  def icon_file(dpi = nil)
+  def icon_file(dpi = nil, want_png = false)
     icon = dpi ? self.icons[dpi.to_i] : self.icon
     return nil if icon.empty?
+
+    if icon.ends_with?('.xml') && want_png
+      icon.gsub! %r{res/drawable-([^-]+)-v21/([^/]+)\.xml}, 'res/drawable-\1-v4/\2.png'
+    end
+
     Dir.mktmpdir do |dir|
       command = "unzip #{self.filepath.shellescape} #{icon.shellescape} -d #{dir.shellescape} 2>&1"
       results = `#{command}`
