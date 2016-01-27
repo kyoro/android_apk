@@ -4,6 +4,11 @@ require 'open3'
 
 class AndroidApk
   attr_accessor :results,:label,:labels,:icon,:icons,:package_name,:version_code,:version_name,:sdk_version,:target_sdk_version,:filepath
+
+  APPLICATION_TAG_NAME = 'application'
+  class AndroidManifestValidateError < StandardError
+  end
+
   def self.analyze(filepath)
     return nil unless File.exist?(filepath)
     apk = AndroidApk.new
@@ -14,6 +19,8 @@ class AndroidApk
     end
     apk.filepath = filepath
     apk.results = results
+
+    _validate_aapt(results)
     vars = _parse_aapt(results)
 
     # application info
@@ -140,5 +147,15 @@ class AndroidApk
       end
     end
     return vars
+  end
+
+  def self._validate_aapt(results)
+    # Check multi application tag from AndroidManifest.xml
+    application_tag = []
+    results.split("\n").each do |line|
+      key, value = _parse_line(line)
+      application_tag.push(value) if key == APPLICATION_TAG_NAME
+    end
+    raise AndroidManifestValidateError, 'Not support multi application tag' if application_tag.count > 1
   end
 end
