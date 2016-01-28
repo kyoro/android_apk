@@ -46,7 +46,6 @@ class AndroidApk
 
   def icon_file(dpi = nil, want_png = false)
     icon = dpi ? self.icons[dpi.to_i] : self.icon
-    icon = icon.first if icon.is_a?(Array)
     return nil if icon.empty?
 
     if want_png && icon.end_with?('.xml')
