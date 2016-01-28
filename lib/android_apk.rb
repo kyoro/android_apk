@@ -6,6 +6,7 @@ class AndroidApk
   attr_accessor :results,:label,:labels,:icon,:icons,:package_name,:version_code,:version_name,:sdk_version,:target_sdk_version,:filepath
 
   APPLICATION_TAG_NAME = 'application'
+  NOT_ALLOW_DUPLICATE_TAG_NAMES = [APPLICATION_TAG_NAME]
   class AndroidManifestValidateError < StandardError
   end
 
@@ -146,7 +147,6 @@ class AndroidApk
     return vars
   end
 
-  NOT_ALLOW_DUPLICATE_TAG_NAMES = ['application']
   def self.allow_duplicate?(key)
     raise AndroidManifestValidateError, "Not support multi #{key} tag" if NOT_ALLOW_DUPLICATE_TAG_NAMES.include?(key)
     true
