@@ -60,7 +60,6 @@ GEM
       json (~> 1.8)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
-
 PLATFORMS
   ruby
 
