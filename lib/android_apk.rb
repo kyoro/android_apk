@@ -19,8 +19,6 @@ class AndroidApk
     end
     apk.filepath = filepath
     apk.results = results
-
-    _validate_aapt(results)
     vars = _parse_aapt(results)
 
     # application info
@@ -129,7 +127,7 @@ class AndroidApk
     results.split("\n").each do |line|
       key, value = _parse_line(line)
       next if key.nil?
-      if vars.key?(key)
+      if vars.key?(key) && allow_duplicate?(key)
         if (vars[key].is_a?(Hash) and value.is_a?(Hash))
           vars[key].merge(value)
         else
@@ -149,13 +147,9 @@ class AndroidApk
     return vars
   end
 
-  def self._validate_aapt(results)
-    # Check multi application tag from AndroidManifest.xml
-    application_tag = []
-    results.split("\n").each do |line|
-      key, value = _parse_line(line)
-      application_tag.push(value) if key == APPLICATION_TAG_NAME
-    end
-    raise AndroidManifestValidateError, 'Not support multi application tag' if application_tag.count > 1
+  NOT_ALLOW_DUPLICATE_TAG_NAMES = ['application']
+  def self.allow_duplicate?(key)
+    raise AndroidManifestValidateError, "Not support multi #{key} tag" if NOT_ALLOW_DUPLICATE_TAG_NAMES.include?(key)
+    true
   end
 end
