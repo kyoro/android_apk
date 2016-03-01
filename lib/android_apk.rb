@@ -1,11 +1,13 @@
-require "tmpdir"
-require "pp"
+require 'tmpdir'
+require 'shellwords'
+require 'open3'
+
 class AndroidApk
   attr_accessor :results,:label,:labels,:icon,:icons,:package_name,:version_code,:version_name,:sdk_version,:target_sdk_version,:filepath
   def self.analyze(filepath)
     return nil unless File.exist?(filepath)
     apk = AndroidApk.new
-    command = "aapt dump badging " + filepath + " 2>&1"
+    command = "aapt dump badging #{filepath.shellescape} 2>&1"
     results = `#{command}`
     if $?.exitstatus != 0 or results.index("ERROR: dump failed")
       return nil
@@ -15,8 +17,8 @@ class AndroidApk
     vars = _parse_aapt(results)
 
     # application info
-    apk.label, apk.icon =
-      vars['application'].values_at('label', 'icon')
+    apk.label = vars['application-label']
+    apk.icon = vars['application']['icon']
 
     # package 
     apk.package_name, apk.version_code, apk.version_name =
@@ -37,11 +39,17 @@ class AndroidApk
     return apk
   end
 
-  def icon_file(dpi = nil)
+  def icon_file(dpi = nil, want_png = false)
     icon = dpi ? self.icons[dpi.to_i] : self.icon
     return nil if icon.empty?
+
+    if want_png && icon.end_with?('.xml')
+      dpis = dpi_str(dpi)
+      icon.gsub! %r{res/drawable-anydpi-v21/([^/]+)\.xml}, "res/drawable-#{dpis}-v4/\\1.png"
+    end
+
     Dir.mktmpdir do |dir|
-      command = sprintf("unzip '%s' '%s' -d '%s' 2>&1",self.filepath,icon,dir)
+      command = "unzip #{self.filepath.shellescape} #{icon.shellescape} -d #{dir.shellescape} 2>&1"
       results = `#{command}`
       path =  dir + "/" + icon 
       return nil unless File.exist?(path)
@@ -49,13 +57,38 @@ class AndroidApk
     end
   end
 
+  def dpi_str(dpi)
+    case dpi.to_i
+      when 120
+        'ldpi'
+      when 160
+        'mdpi'
+      when 240
+        'hdpi'
+      when 320
+        'xhdpi'
+      when 480
+        'xxhdpi'
+      when 640
+        'xxxhdpi'
+      else
+        'xxxhdpi'
+    end
+  end
+
   def signature
-    command = sprintf("unzip -p '%s' META-INF/*.RSA | keytool -printcert | grep SHA1: 2>&1", self.filepath)
-    results = `#{command}`
-    return nil if $?.exitstatus != 0 || results.nil? || !results.index('SHA1:')
-    val = results.scan(/(?:[0-9A-Z]{2}:?){20}/)
+    command = "unzip -p #{self.filepath.shellescape} META-INF/*.RSA META-INF/*.DSA | keytool -printcert | grep SHA1:"
+    output, _, status = Open3.capture3(command)
+    return if status != 0 || output.nil? || !output.index('SHA1:')
+    val = output.scan(/(?:[0-9A-Z]{2}:?){20}/)
     return nil if val.nil? || val.length != 1
     return val[0].gsub(/:/, "").downcase
+  end
+
+  # workaround for https://code.google.com/p/android/issues/detail?id=160847
+  def self._parse_values_workaround(str)
+    return nil if str.nil?
+    str.scan(/^'(.+)'$/).map{|v| v[0].gsub(/\\'/, "'")}
   end
 
   def self._parse_values(str)
@@ -74,7 +107,13 @@ class AndroidApk
   def self._parse_line(line)
     return nil if line.nil?
     info = line.split(":", 2)
-    return info[0], _parse_values( info[1] )
+    values =
+        if info[0].start_with?('application-label')
+          _parse_values_workaround info[1]
+        else
+          _parse_values info[1]
+        end
+    return info[0], values
   end
 
   def self._parse_aapt(results)

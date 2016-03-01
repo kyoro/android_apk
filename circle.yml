@@ -1,0 +1,4 @@
+machine:
+  environment:
+    TERM: dumb
+    PATH: $ANDROID_HOME/build-tools/22.0.1:$PATH
