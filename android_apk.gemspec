@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Kyosuke INOUE"]
-  s.date = "2015-04-29"
+  s.date = "2016-03-01"
   s.description = "This library can analyze Android APK application package. You can get any information of android apk file."
   s.email = "kyoro@hakamastyle.net"
   s.extra_rdoc_files = [
@@ -28,12 +28,16 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "android_apk.gemspec",
+    "circle.yml",
     "lib/android_apk.rb",
     "spec/android_apk_spec.rb",
     "spec/mock/BarcodeScanner4.2.apk",
     "spec/mock/UECExpress.apk",
+    "spec/mock/dsa.apk",
     "spec/mock/dummy.apk",
+    "spec/mock/sample with space.apk",
     "spec/mock/sample.apk",
+    "spec/mock/vector-icon.apk",
     "spec/spec_helper.rb"
   ]
   s.homepage = "http://github.com/kyoro/android_apk"
@@ -45,22 +49,22 @@ Gem::Specification.new do |s|
     s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<rspec>, ["~> 2.8.0"])
+      s.add_development_dependency(%q<rspec>, ["~> 3.2.0"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
+      s.add_development_dependency(%q<bundler>, ["~> 1.10.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.4"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
     else
-      s.add_dependency(%q<rspec>, ["~> 2.8.0"])
+      s.add_dependency(%q<rspec>, ["~> 3.2.0"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_dependency(%q<bundler>, ["~> 1.0.0"])
+      s.add_dependency(%q<bundler>, ["~> 1.10.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
       s.add_dependency(%q<simplecov>, [">= 0"])
     end
   else
-    s.add_dependency(%q<rspec>, ["~> 2.8.0"])
+    s.add_dependency(%q<rspec>, ["~> 3.2.0"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
-    s.add_dependency(%q<bundler>, ["~> 1.0.0"])
+    s.add_dependency(%q<bundler>, ["~> 1.10.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
     s.add_dependency(%q<simplecov>, [">= 0"])
   end
