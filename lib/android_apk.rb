@@ -50,7 +50,7 @@ class AndroidApk
 
     if want_png && icon.end_with?('.xml')
       dpis = dpi_str(dpi)
-      icon.gsub! %r{res/drawable-anydpi-v21/([^/]+)\.xml}, "res/drawable-#{dpis}-v4/\\1.png"
+      icon.gsub! %r{res/(drawable|mipmap)-anydpi-(?:v\d+)/([^/]+)\.xml}, "res/\\1-#{dpis}-v4/\\2.png"
     end
 
     Dir.mktmpdir do |dir|
