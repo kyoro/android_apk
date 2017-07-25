@@ -7,14 +7,16 @@ describe "AndroidApk" do
   apk2 = nil
   icon_not_set_apk = nil
 
-  mockdir                = File.join(File.dirname(__FILE__), 'mock')
-  sample_file_path       = File.join(mockdir, 'sample.apk')
-  sample2_file_path      = File.join(mockdir, 'BarcodeScanner4.2.apk')
-  sample_space_file_path = File.join(mockdir, 'sample with space.apk')
-  icon_not_set_file_path = File.join(mockdir, 'UECExpress.apk')
-  dummy_file_path        = File.join(mockdir, 'dummy.apk')
-  dsa_file_path          = File.join(mockdir, 'dsa.apk')
-  vector_file_path       = File.join(mockdir, 'vector-icon.apk')
+  mockdir                         = File.join(File.dirname(__FILE__), 'mock')
+  sample_file_path                = File.join(mockdir, 'sample.apk')
+  sample2_file_path               = File.join(mockdir, 'BarcodeScanner4.2.apk')
+  sample_space_file_path          = File.join(mockdir, 'sample with space.apk')
+  icon_not_set_file_path          = File.join(mockdir, 'UECExpress.apk')
+  dummy_file_path                 = File.join(mockdir, 'dummy.apk')
+  dsa_file_path                   = File.join(mockdir, 'dsa.apk')
+  vector_file_path                = File.join(mockdir, 'vector-icon.apk')
+  vector_v26_file_path            = File.join(mockdir, 'vector-icon-v26.apk')
+  multi_application_tag_file_path = File.join(mockdir, 'multi_application_tag.apk')
 
   it "Sample apk file exist" do
     File.exist?(sample_file_path).should == true
@@ -109,8 +111,7 @@ describe "AndroidApk" do
     end 
   end
 
-  context "with vector icon" do
-    subject { AndroidApk.analyze(vector_file_path) }
+  shared_examples_for 'vector icon' do
     it 'can be analyzed' do
       is_expected.not_to be_nil
     end
@@ -122,6 +123,30 @@ describe "AndroidApk" do
     end
     it 'can return png icon by specific dpi' do
       expect(subject.icon_file(240, true)).not_to be_nil
+    end
+  end
+
+  context "with vector icon" do
+    subject { AndroidApk.analyze(vector_file_path) }
+    it_behaves_like 'vector icon'
+  end
+
+  context "with vector icon v26" do
+    subject { AndroidApk.analyze(vector_v26_file_path) }
+    it_behaves_like 'vector icon'
+  end
+
+  context "multi application tag error" do
+    it 'should raise error' do
+      expect {
+        AndroidApk.analyze(multi_application_tag_file_path)
+      }.to raise_error AndroidApk::AndroidManifestValidateError
+    end
+
+    it 'not raise error' do
+      expect {
+        AndroidApk.analyze(vector_file_path)
+      }.not_to raise_error
     end
   end
 end
