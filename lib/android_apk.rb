@@ -4,6 +4,11 @@ require 'open3'
 
 class AndroidApk
   attr_accessor :results,:label,:labels,:icon,:icons,:package_name,:version_code,:version_name,:sdk_version,:target_sdk_version,:filepath
+
+  NOT_ALLOW_DUPLICATE_TAG_NAMES = %w(application)
+  class AndroidManifestValidateError < StandardError
+  end
+
   def self.analyze(filepath)
     return nil unless File.exist?(filepath)
     apk = AndroidApk.new
@@ -45,7 +50,7 @@ class AndroidApk
 
     if want_png && icon.end_with?('.xml')
       dpis = dpi_str(dpi)
-      icon.gsub! %r{res/drawable-anydpi-v21/([^/]+)\.xml}, "res/drawable-#{dpis}-v4/\\1.png"
+      icon.gsub! %r{res/(drawable|mipmap)-anydpi-(?:v\d+)/([^/]+)\.xml}, "res/\\1-#{dpis}-v4/\\2.png"
     end
 
     Dir.mktmpdir do |dir|
@@ -121,7 +126,7 @@ class AndroidApk
     results.split("\n").each do |line|
       key, value = _parse_line(line)
       next if key.nil?
-      if vars.key?(key)
+      if vars.key?(key) && allow_duplicate?(key)
         if (vars[key].is_a?(Hash) and value.is_a?(Hash))
           vars[key].merge(value)
         else
@@ -139,5 +144,10 @@ class AndroidApk
       end
     end
     return vars
+  end
+
+  def self.allow_duplicate?(key)
+    raise AndroidManifestValidateError, "Duplication of #{key} tag is not allowed" if NOT_ALLOW_DUPLICATE_TAG_NAMES.include?(key)
+    true
   end
 end
