@@ -15,6 +15,7 @@ describe "AndroidApk" do
   dummy_file_path                 = File.join(mockdir, 'dummy.apk')
   dsa_file_path                   = File.join(mockdir, 'dsa.apk')
   vector_file_path                = File.join(mockdir, 'vector-icon.apk')
+  vector_v26_file_path            = File.join(mockdir, 'vector-icon-v26.apk')
   multi_application_tag_file_path = File.join(mockdir, 'multi_application_tag.apk')
 
   it "Sample apk file exist" do
@@ -110,8 +111,7 @@ describe "AndroidApk" do
     end 
   end
 
-  context "with vector icon" do
-    subject { AndroidApk.analyze(vector_file_path) }
+  shared_examples_for 'vector icon' do
     it 'can be analyzed' do
       is_expected.not_to be_nil
     end
@@ -124,6 +124,16 @@ describe "AndroidApk" do
     it 'can return png icon by specific dpi' do
       expect(subject.icon_file(240, true)).not_to be_nil
     end
+  end
+
+  context "with vector icon" do
+    subject { AndroidApk.analyze(vector_file_path) }
+    it_behaves_like 'vector icon'
+  end
+
+  context "with vector icon v26" do
+    subject { AndroidApk.analyze(vector_v26_file_path) }
+    it_behaves_like 'vector icon'
   end
 
   context "multi application tag error" do
