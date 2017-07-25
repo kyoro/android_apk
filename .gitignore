@@ -47,3 +47,10 @@ pkg
 
 # For rubinius:
 #*.rbc
+
+# Intellij
+.idea
+*.iml
+
+# OSX
+.DS_Store
